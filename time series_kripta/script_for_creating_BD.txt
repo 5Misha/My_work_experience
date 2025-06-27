@@ -1,0 +1,247 @@
+create schema currencies_data;
+
+create table currencies_data.dim_currencies(
+	currency_code VARCHAR(10) PRIMARY KEY,
+	currency_name varchar(40)
+);
+insert into currencies_data.dim_currencies values ('BTC', 'Монета Bitcoin');
+insert into currencies_data.dim_currencies values ('XLM', 'Монета Stellar');
+insert into currencies_data.dim_currencies values ('XRP', 'Монета Ripple');
+insert into currencies_data.dim_currencies values ('ETH', 'Монета Ethereum');
+insert into currencies_data.dim_currencies values ('HBAR', 'Монета Hedera');
+
+
+create table currencies_data.dim_stock_markets(
+	stock_market_code varchar(10) PRIMARY KEY,
+	stock_market_name varchar(50)
+);
+
+insert into currencies_data.dim_stock_markets values ('BINANCE', 'Источник - биржа Binance');
+insert into currencies_data.dim_stock_markets values ('BYBIT', 'Источник - биржа Bybit');
+
+
+create table currencies_data.fct_currencies_d(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_currencies varchar(10),
+	stock_market_code varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+
+create table currencies_data.fct_currencies_h(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_currencies varchar(10),
+	stock_market_code varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+create table currencies_data.fct_currencies_15_m(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_currencies varchar(10),
+	stock_market_code varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+create table currencies_data.fct_currencies_m(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_currencies varchar(10),
+	stock_market_code varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+
+
+create schema model_metadata;
+
+create table model_metadata.dim_data_codes(
+	train_date_code VARCHAR(20) PRIMARY KEY,
+	description varchar(40)
+);
+insert into model_metadata.dim_data_codes values ('d', 'Дневные данные');
+insert into model_metadata.dim_data_codes values ('h', 'Почасовые данные');
+insert into model_metadata.dim_data_codes values ('15_m', '15 минутные данные');
+insert into model_metadata.dim_data_codes values ('m', 'минутные данные');
+
+create table model_metadata.models(
+	id SERIAL PRIMARY key,
+	name varchar(40),
+	description varchar(500),
+	id_dim_data_codes varchar(20)
+);
+
+insert into model_metadata.models values (0, 'lstm', 'Мультисегментная LSTM (Long short-term memory) модель с предсказанием на 3 дня', 'd');
+insert into model_metadata.models values (1, 'catboost_persegment_model_train_predict', 'Модель CatBoost для предсказания одного таргета с горизонтом на 3 дня', 'd');
+insert into model_metadata.models values (2, 'catboost_multitarget_model_train_predict', 'Мультисегментная модель CatBoost с предсказанием на 3 дня', 'd');
+
+
+create table model_metadata.models_metrics(
+	id SERIAL PRIMARY key,
+	id_model_hyperparams int,
+	id_models_io_params int,
+	eval_time timestamp,
+	values JSONB
+);
+
+create table model_metadata.models_hyperparams(
+	id SERIAL PRIMARY key,
+	id_models int,
+	last_train_time timestamp,
+	hyper_params jsonb
+);
+
+create table model_metadata.models_io_params(
+	id SERIAL PRIMARY key,
+	id_models int,
+	input_params jsonb,
+	output_params jsonb,
+	last_train_time timestamp
+);
+
+
+
+
+create schema model_predicts;
+
+create table model_predicts.predicts_D(
+	id SERIAL PRIMARY key,
+	id_models int,
+	id_fct_currencies_D int,
+	open_predict numeric(18,8),
+	high_predict numeric(18,8),
+	low_predict numeric(18,8),
+	close_predict numeric(18,8)
+);
+
+create table model_predicts.predicts_H(
+	id SERIAL PRIMARY key,
+	id_models int,
+	id_fct_currencies_H int,
+	open_predict numeric(18,8),
+	high_predict numeric(18,8),
+	low_predict numeric(18,8),
+	close_predict numeric(18,8)
+);
+
+create table model_predicts.predicts_15_M(
+	id SERIAL PRIMARY key,
+	id_models int,
+	id_fct_currencies_M int,
+	open_predict numeric(18,8),
+	high_predict numeric(18,8),
+	low_predict numeric(18,8),
+	close_predict numeric(18,8)
+);
+
+create table model_predicts.predicts_M(
+	id SERIAL PRIMARY key,
+	id_models int,
+	id_fct_currencies_M int,
+	open_predict numeric(18,8),
+	high_predict numeric(18,8),
+	low_predict numeric(18,8),
+	close_predict numeric(18,8)
+);
+
+create table model_predicts.bot_advices(
+	id SERIAL PRIMARY key,
+	code_dim_currencies varchar(10),
+	code_advice varchar(20),
+	timestamp timestamp
+);
+
+create table model_predicts.dim_bot_advices(
+	code SERIAL PRIMARY key,
+	advice varchar(20)
+);
+insert into model_predicts.dim_bot_advices values ('0', 'Продавать');
+insert into model_predicts.dim_bot_advices values ('1', 'Держать');
+insert into model_predicts.dim_bot_advices values ('2', 'Покупать');
+
+
+
+
+create schema exogenous_data;
+
+
+create table exogenous_data.dim_regressors(
+	regressor_code VARCHAR(10) PRIMARY KEY,
+	regressor_name varchar(200)
+);
+insert into exogenous_data.dim_regressors values ('GSPC', 'S&P 500 - индекс фондового рынка,отслеживающий показатели 500 крупных компаний США');
+insert into exogenous_data.dim_regressors values ('Oil_Brent', 'Цена нефти марки Brent (международный эталон для ценообразования нефти)');
+insert into exogenous_data.dim_regressors values ('DXY', 'Индекс доллара США в зависимости от курса других валют');
+
+
+
+create table exogenous_data.fct_regressors_d(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_regressors varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+
+create table exogenous_data.fct_regressors_h(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_regressors varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+create table exogenous_data.fct_regressors_15_m(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_regressors varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
+
+create table exogenous_data.fct_regressors_m(
+	id SERIAL PRIMARY key,
+	insert_date timestamp,
+	code_dim_regressors varchar(10),
+	timestamp timestamp,
+	open numeric(18,8),
+	high numeric(18,8),
+	low numeric(18,8),
+	close numeric(18,8),
+	volume numeric(19,8)
+);
