@@ -4,17 +4,23 @@
 
 Ниже будут приведены примеры итоговой работы AI помощника при тестировании
 
-1. ![Mistake. Contact support: +79104513080](images_for_README/1.png)
+1. 
+![Mistake. Contact support: +79104513080](images_for_README/1.png)
 
-2. ![Mistake. Contact support: +79104513080](images_for_README/2.png)
+2. 
+![Mistake. Contact support: +79104513080](images_for_README/2.png)
 
 3. Если помощник не уверен, то он уточняет вопрос, а не генерирует случайную ссылку
 ![Mistake. Contact support: +79104513080](images_for_README/3.png)
 
-4. ![Mistake. Contact support: +79104513080](images_for_README/4.png)
+4. 
+![Mistake. Contact support: +79104513080](images_for_README/4.png)
 
-5. ![Mistake. Contact support: +79104513080](images_for_README/5.png)
+5. 
+![Mistake. Contact support: +79104513080](images_for_README/5.png)
 
-6. ![Mistake. Contact support: +79104513080](images_for_README/6.png)
+6. 
+![Mistake. Contact support: +79104513080](images_for_README/6.png)
 
-7. ![Mistake. Contact support: +79104513080](images_for_README/7.png)
+7. 
+![Mistake. Contact support: +79104513080](images_for_README/7.png)
