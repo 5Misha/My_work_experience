@@ -5,7 +5,7 @@
 Итоги работы модели на тестовой выборке после обработки изображений:
 
 1. 
-![Mistake. Contact support: +79104513080](images_for_README\cv_1.png)
+![Mistake. Contact support: +79104513080](images_for_README/cv_1.png)
 
 2. 
 ![Mistake. Contact support: +79104513080](images_for_README/cv_2.png)
